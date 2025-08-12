@@ -1,23 +1,24 @@
 <?php
-class Connection {
-    private $conn;
 
-    public function __construct() {
-        $this->connect();
-    }
+namespace Model;
 
-    private function connect() {
+use PDO;
+use PDOException;
+
+require_once __DIR__ . "/../Config/configuration.php";
+
+class Connection
+{
+    public static function getConnection()
+    {
         try {
-            $this->conn = new PDO(
-                "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";port=" . DB_PORT,DB_USER,DB_PASSWORD );
-            $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            return new PDO(
+                'mysql:host=' . DB_HOST . ';port=' . DB_PORT . ';dbname=' . DB_NAME,
+                DB_USER,
+                DB_PASSWORD
+            );
         } catch (PDOException $e) {
-            die(json_encode(["error" => $e->getMessage()]));
+            die("Erro de conexão: " . $e->getMessage());
         }
     }
-
-    public function getConnection() {
-        return $this->conn;
-    }
 }
-?>
