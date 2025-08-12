@@ -1,45 +1,29 @@
 <?php
-header("Content-Type: application/json");
+// IMPORTAÇÃO DE ARQUIVOS
+require_once __DIR__ . '/vendor/autoload.php';
 
-require_once "config.php";
-require_once "database/Database.php";
-require_once "model/Book.php";
-require_once "controller/BookController.php";
+use Controller\BookController;
 
-$db = (new Connection())->getConnection();
-$controller = new BookController($db);
+// INSTANCIA O CONTROLLER
+$bookController = new BookController();
 
+// OBTÉM O MÉTODO HTTP
 $method = $_SERVER['REQUEST_METHOD'];
-$uri = explode("/", trim($_SERVER['REQUEST_URI'], "/"));
-$id = $uri[1] ?? null; // /books/{id}
-
-if ($uri[0] !== "books") {
-    http_response_code(404);
-    echo json_encode(["error" => "Endpoint não encontrado"]);
-    exit;
-}
 
 switch ($method) {
-    case "GET":
-        $controller->index();
+    case 'GET':
+        $bookController->getBooks();
         break;
-
-    case "POST":
-        $data = json_decode(file_get_contents("php://input"), true);
-        $controller->store($data);
+    case 'POST':
+        $bookController->createBook();
         break;
-
-    case "PUT":
-        $data = json_decode(file_get_contents("php://input"), true);
-        $controller->update($id, $data);
+    case 'PUT':
+        $bookController->updateBook();
         break;
-
-    case "DELETE":
-        $controller->delete($id);
+    case 'DELETE':
+        $bookController->deleteBook();
         break;
-
     default:
-        http_response_code(405);
-        echo json_encode(["error" => "Método não permitido"]);
+        echo json_encode(["message" => "Método não permitido"]);
+        break;
 }
-?>
