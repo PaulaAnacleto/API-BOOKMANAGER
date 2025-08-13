@@ -22,13 +22,22 @@ class Book
     }
 
     // Método para obter todos os livros
-    public function getBooks()
-    {
-        $sql = "SELECT * FROM books";
+    public function getBooks($id = null){
+
+        if($id){
+        $sql = 'SELECT * FROM books WHERE id = :id';
         $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        
+        } else {
+            $sql =  'SELECT * FROM books';
+            $stmt = $this->conn->prepare($sql);
+        }
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    
 
     // Método para criar um novo livro
     public function createBook()

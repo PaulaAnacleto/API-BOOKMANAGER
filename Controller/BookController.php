@@ -11,8 +11,10 @@ class BookController
     // Função para pegar todos os livros
     public function getBooks()
     {
+        $id = isset($_GET['id']) ? intval($_GET['id']) : null;
+
         $book = new Book();
-        $books = $book->getBooks();
+        $books = $book->getBooks($id);
 
         if ($books) {
             header('Content-Type: application/json', true, 200);
@@ -22,6 +24,8 @@ class BookController
             echo json_encode(["message" => "Nenhum livro encontrado"]);
         }
     }
+
+    
 
     // Função para criar um livro
     public function createBook()
